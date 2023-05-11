@@ -7,5 +7,5 @@ WORKDIR /$REPOSITORY
 
 # 复制项目所有文件
 COPY . /$REPOSITORY/
-RUN yarn install
+RUN yarn install --production
 RUN yarn start
