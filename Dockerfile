@@ -1,14 +1,14 @@
 FROM grafana/grafana:latest
 FROM node:18.16.0
 ENV REPOSITORY="grafana-guance-datasource"
+# 复制项目所有文件
+ADD . /$REPOSITORY/
 
-RUN mkdir /config
-RUN mkdir /config/$REPOSITORY
+# 设置工作目录
+WORKDIR /$REPOSITORY
 
-WORKDIR /config/$REPOSITORY
+RUN yarn install
 
-RUN npm install
-
-RUN npm run build
+RUN yarn build
 
 COPY ./dist ./plugins/$REPOSITORY
