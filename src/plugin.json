@@ -1,0 +1,53 @@
+{
+  "$schema": "https://raw.githubusercontent.com/grafana/grafana/master/docs/sources/developers/plugins/plugin.schema.json",
+  "type": "datasource",
+  "name": "Guance",
+  "id": "guance-guance-datasource",
+  "metrics": true,
+  "info": {
+    "description": "Guance data source for Grafana",
+    "author": {
+      "name": "Guance",
+      "url": "https://www.guance.com"
+    },
+    "keywords": ["datasource", "guance", "observability"],
+    "logos": {
+      "small": "img/logo.svg",
+      "large": "img/logo.svg"
+    },
+    "links": [],
+    "screenshots": [],
+    "version": "%VERSION%",
+    "updated": "%TODAY%"
+  },
+  "routes": [
+    {
+      "path": "query",
+      "url": "{{ .JsonData.endpoint }}/api/v1/df/query_data",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "content": "application/json"
+        },
+        {
+          "name": "DF-API-KEY",
+          "content": "{{ .SecureJsonData.apiKey }}"
+        }
+      ]
+    },
+    {
+      "path": "healthz",
+      "url": "{{ .JsonData.endpoint }}/api/v1/const/check_ping",
+      "headers": [
+        {
+          "name": "DF-API-KEY",
+          "content": "{{ .SecureJsonData.apiKey }}"
+        }
+      ]
+    }
+  ],
+  "dependencies": {
+    "grafanaDependency": "^9.3.8",
+    "plugins": []
+  }
+}
