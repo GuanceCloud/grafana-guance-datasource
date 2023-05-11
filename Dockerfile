@@ -1,18 +1,17 @@
-FROM grafana/grafana:latest
-# FROM node:18.16.0
+# 
+FROM node:18.16.0 as builder
 ENV REPOSITORY="grafana-guance-datasource"
-# 复制项目所有文件
-ADD . /$REPOSITORY/
-
 # 设置工作目录
-# WORKDIR /$REPOSITORY
+WORKDIR /$REPOSITORY
+
+# 复制项目所有文件
+COPY . /$REPOSITORY/
 
 # RUN yarn install
-
 # RUN yarn build
+
+FROM grafana/grafana:latest
+
+COPY --from=builder /$REPOSITORY/dist /plugins
 RUN ls -l
-RUN cd conf
-RUN ls -l
-# RUN cd /var/lib/grafana
-# RUN ls -l 
-COPY ./dist ./plugins/$REPOSITORY
+
