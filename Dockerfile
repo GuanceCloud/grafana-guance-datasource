@@ -11,6 +11,6 @@ WORKDIR /$REPOSITORY
 
 # RUN yarn build
 RUN ls -l
-RUN CMD /var/lib/grafana
+RUN cd /var/lib/grafana
 RUN ls -l 
 COPY ./dist ./plugins/$REPOSITORY
