@@ -1,0 +1,20 @@
+variables:
+  REPOSITORY: 'grafana-guance-datasource'
+  PROJECT: 'grafana-guance-datasource'
+
+stages:
+  - build
+  - deploy
+
+buildTesting:
+  stage: build
+  only:
+    - dev
+  script:
+    - yarn install
+    - yarn build
+    - docker build -t $REPOSITORY:testing .
+    - docker tag $REPOSITORY:testing registry.jiagouyun.com/cloudcare-front/$REPOSITORY:testing
+    - docker push registry.jiagouyun.com/cloudcare-front/$REPOSITORY:testing
+  tags:
+    - cloudcare-multiarch
