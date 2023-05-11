@@ -7,7 +7,7 @@ WORKDIR /$REPOSITORY
 # 复制项目所有文件
 COPY . /$REPOSITORY/
 
-RUN yarn install --production
+RUN yarn install
 RUN yarn build
 
 FROM registry.jiagouyun.com/basis/guance:grafana
