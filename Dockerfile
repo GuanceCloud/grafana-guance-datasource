@@ -5,12 +5,12 @@ ENV REPOSITORY="grafana-guance-datasource"
 ADD . /$REPOSITORY/
 
 # 设置工作目录
-WORKDIR /$REPOSITORY
+# WORKDIR /$REPOSITORY
 
 # RUN yarn install
 
 # RUN yarn build
 RUN ls -l
-RUN cd /var/lib/grafana
-RUN ls -l 
+# RUN cd /var/lib/grafana
+# RUN ls -l 
 COPY ./dist ./plugins/$REPOSITORY
