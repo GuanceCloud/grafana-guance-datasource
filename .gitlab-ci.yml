@@ -20,7 +20,7 @@ buildTesting:
 buildBasis:
   stage: deploy
   only:
-    - /basis-\d+/
+    - basis-grafana
   script:
     - docker buildx build --platform linux/arm64,linux/amd64
       -t registry.jiagouyun.com/basis/guance:grafana
