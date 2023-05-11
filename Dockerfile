@@ -11,6 +11,8 @@ ADD . /$REPOSITORY/
 
 # RUN yarn build
 RUN ls -l
+RUN cd conf
+RUN ls -l
 # RUN cd /var/lib/grafana
 # RUN ls -l 
 COPY ./dist ./plugins/$REPOSITORY
