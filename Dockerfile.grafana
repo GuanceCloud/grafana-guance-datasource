@@ -1,0 +1,11 @@
+FROM node:18.16.0
+FROM grafana/grafana:latest
+
+ENV REPOSITORY="grafana-guance"
+# 设置工作目录
+WORKDIR /$REPOSITORY
+
+# 复制项目所有文件
+COPY . /$REPOSITORY/
+RUN yarn install --immutable
+RUN yarn start

@@ -10,7 +10,7 @@ COPY . /$REPOSITORY/
 RUN yarn install
 RUN yarn build
 
-FROM grafana/grafana:latest
+FROM registry.jiagouyun.com/basis/guance:grafana
 
 COPY --from=builder /$REPOSITORY/dist /plugins/
 

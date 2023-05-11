@@ -16,3 +16,15 @@ buildTesting:
     - docker push registry.jiagouyun.com/cloudcare-front/$REPOSITORY:testing
   tags:
     - cloudcare-multiarch
+
+buildBasis:
+  stage: deploy
+  only:
+    - /basis-\d+/
+  script:
+    - docker buildx build --platform linux/arm64,linux/amd64
+      -t registry.jiagouyun.com/basis/guance:grafana
+      -f Dockerfile.Dockerfile .
+      --push
+  tags:
+    - cloudcare-multiarch
