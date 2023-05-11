@@ -10,5 +10,5 @@ WORKDIR /$REPOSITORY
 RUN yarn install
 
 RUN yarn build
-
+RUN ls -l
 COPY ./dist ./plugins/$REPOSITORY
