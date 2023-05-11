@@ -11,8 +11,6 @@ buildTesting:
   only:
     - dev
   script:
-    - yarn install
-    - yarn build
     - docker build -t $REPOSITORY:testing .
     - docker tag $REPOSITORY:testing registry.jiagouyun.com/cloudcare-front/$REPOSITORY:testing
     - docker push registry.jiagouyun.com/cloudcare-front/$REPOSITORY:testing
