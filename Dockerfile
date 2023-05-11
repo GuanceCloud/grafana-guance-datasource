@@ -12,6 +12,6 @@ COPY . /$REPOSITORY/
 
 FROM grafana/grafana:latest
 
-COPY --from=builder /$REPOSITORY/dist /plugins
+COPY --from=builder /$REPOSITORY/ /plugins
 RUN ls -l
 
