@@ -7,7 +7,7 @@
         "test": "grafana-toolkit plugin:test",
         "dev": "grafana-toolkit plugin:dev",
         "watch": "grafana-toolkit plugin:dev --watch",
-        "publish": "yarn build && node ./build/publish-oss.js"
+        "publish": "grafana-toolkit plugin:build && node ./build/publish-oss.js"
     },
     "author": "Guance",
     "license": "Apache-2.0",
