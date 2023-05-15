@@ -21,7 +21,7 @@ docker-compose up
 4. 访问页面 http://localhost:3000/
 
 ## 发测试环境
-1. 
+1. 打包
 ```
 yarn run publish
 ```

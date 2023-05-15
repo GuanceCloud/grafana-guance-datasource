@@ -8,7 +8,7 @@
     "description": "Guance data source for Grafana",
     "author": {
       "name": "Guance",
-      "url": "https://www.guance.com"
+      "url": "https://en.guance.com/"
     },
     "keywords": ["datasource", "guance", "observability"],
     "logos": {
