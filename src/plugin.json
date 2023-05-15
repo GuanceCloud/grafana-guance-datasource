@@ -16,7 +16,10 @@
       "large": "img/logo.svg"
     },
     "links": [],
-    "screenshots": [],
+    "screenshots": [
+      { "name": "Datasource", "path": "img/datasource.png" },
+      { "name": "Query", "path": "img/query.png" }
+    ],
     "version": "%VERSION%",
     "updated": "%TODAY%"
   },
