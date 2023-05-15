@@ -1,4 +1,4 @@
-# grafana-guance-datasource 开发手册
+# grafana-guance-datasource 开发
 
 本插件目的为在 Grafana 中展示观测云数据。
 
@@ -20,10 +20,14 @@ docker-compose up
 
 4. 访问页面 http://localhost:3000/
 
-## 打包发布测试
+## 发测试环境
+1. 
 ```
 yarn run publish
 ```
+
+2. 重启 Rancher
+
 
 
 ## 参考文档
