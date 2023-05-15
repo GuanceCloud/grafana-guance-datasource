@@ -17,8 +17,8 @@
     },
     "links": [],
     "screenshots": [
-      { "name": "Datasource", "path": "img/datasource.png" },
-      { "name": "Query", "path": "img/query.png" }
+      { "name": "Datasource", "path": "img/datasource.jpg" },
+      { "name": "Query", "path": "img/query.jpg" }
     ],
     "version": "%VERSION%",
     "updated": "%TODAY%"
