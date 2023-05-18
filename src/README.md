@@ -20,7 +20,7 @@ To install the data source, refer to [plugin installation](https://grafana.com/d
 
 Configure the data source with the Endpint and API Key, and save the data source.
 
-![](img/datasource.jpg)
+![](https://raw.githubusercontent.com/GuanceCloud/grafana-guance-datasource/main/src/img/datasource.jpg)
 
 ## Get the Endpint from Guance
 
@@ -40,4 +40,4 @@ API Key can be found as **API Key ID** in Guance, and you can find it in **[Guan
 
 Now you can configure a panel within [DQL](https://docs.guance.com/en/dql/define/) on your dashboard.
 
-![](img/query.jpg)
+![](https://raw.githubusercontent.com/GuanceCloud/grafana-guance-datasource/main/src/img/query.jpg)
