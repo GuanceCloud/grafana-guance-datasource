@@ -16,9 +16,13 @@ This plugin has the following requirements:
 
 To install the data source, refer to [plugin installation](https://grafana.com/docs/grafana/latest/administration/plugin-management).
 
-## Get the Endpint from Guance
+## Configuration
 
 Configure the data source with the Endpint and API Key, and save the data source.
+
+![](img/datasource.png)
+
+## Get the Endpint from Guance
 
 The Endpint can be found [here](https://docs.guance.com/en/open-api/#support-endpoint).
 
@@ -35,3 +39,5 @@ API Key can be found as **API Key ID** in Guance, and you can find it in **[Guan
 ## Configure the data source
 
 Now you can configure a panel within [DQL](https://docs.guance.com/en/dql/define/) on your dashboard.
+
+![](img/query.png)
