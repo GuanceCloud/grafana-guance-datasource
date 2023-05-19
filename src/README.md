@@ -18,13 +18,13 @@ To install the data source, refer to [plugin installation](https://grafana.com/d
 
 ## Configuration
 
-Configure the data source with the Endpint and API Key, and save the data source.
+Configure the data source with the Endpoint and API Key, and save the data source.
 
 ![](https://raw.githubusercontent.com/GuanceCloud/grafana-guance-datasource/main/src/img/datasource.jpg)
 
-## Get the Endpint from Guance
+## Get the Endpoint from Guance
 
-The Endpint can be found [here](https://docs.guance.com/en/open-api/#support-endpoint).
+The Endpoint can be found [here](https://docs.guance.com/en/open-api/#support-endpoint).
 
 ## Get an API key from Guance
 
@@ -33,6 +33,8 @@ API Key can be found as **API Key ID** in Guance, and you can find it in **[Guan
 1. Login to https://auth.guance.com/en/.
 2. Enter **Management > API Key** and Set up an API key.
 3. Add the API key to the Guance plugin.
+
+![](https://raw.githubusercontent.com/GuanceCloud/grafana-guance-datasource/main/src/img/apikey.jpg)
 
 > More details can be found in [API Key](https://docs.guance.com/en/management/api-key/).
 
