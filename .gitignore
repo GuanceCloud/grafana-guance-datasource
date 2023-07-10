@@ -34,3 +34,5 @@ e2e-results/
 
 .eslintcache
 build/
+
+README-dev.md

@@ -1,38 +1,15 @@
-# grafana-guance-datasource 开发
+# grafana-guance-datasource 观测云数据源
 
 本插件目的为在 Grafana 中展示观测云数据。
 
-## 开发
-1. 安装依赖
-```
-yarn install
-```
+## 安装
 
-2. 启动本项目
-```
-yarn watch
-```
+1. 下载插件 https://static.guance.com/grafana-plugins/guance-guance-datasource.zip
 
-3. 启动 grafana
-```
-docker-compose up
-```
+2. 解压放入插件目录，默认在 grafana/plugins，如有修改请查阅配置文件 plugins = xxx 项
 
-4. 访问页面 http://localhost:3000/
+3. 修改配置文件 allow_loading_unsigned_plugins = guance-guance-datasource
 
-## 发测试环境
-1. 打包
-```
-yarn run publish
-```
+4. 重启 Grafana
 
-2. 重启 Rancher
-
-
-
-## 参考文档
-1. [Development with local Grafana](https://grafana.com/docs/grafana/latest/developers/plugins/development-with-local-grafana/)
-2. [Grafana Developer guide](https://github.com/grafana/grafana/blob/HEAD/contribute/developer-guide.md)
-3. [Build a data source plugin](https://grafana.com/tutorials/build-a-data-source-plugin/)
-4. [Build a plugin](https://grafana.com/docs/grafana/latest/developers/plugins/)
-5. [Grafana UI](https://developers.grafana.com/ui/latest/index.html)
+5. 进入插件列表搜索 guance 即可看到。
