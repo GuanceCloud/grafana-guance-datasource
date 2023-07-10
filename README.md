@@ -27,5 +27,3 @@ allow_loading_unsigned_plugins = guance-guance-datasource
 ```
 
 4. 重启 Grafana
-
-5. 进入插件列表搜索 guance 即可看到。
