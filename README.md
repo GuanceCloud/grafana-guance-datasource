@@ -2,6 +2,10 @@
 
 本插件目的为在 Grafana 中展示观测云数据。
 
+## 安装前
+
+Grafana 版本要求 >=8.3.7
+
 ## 安装
 
 1. [点击下载插件](https://static.guance.com/grafana-plugins/guance-guance-datasource.zip)

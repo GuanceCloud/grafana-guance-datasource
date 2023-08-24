@@ -1,7 +1,9 @@
 import React, { ChangeEvent } from 'react';
-import { InlineField, Input, SecretInput } from '@grafana/ui';
+import { InlineField, Input, LegacyForms } from '@grafana/ui';
 import { DataSourcePluginOptionsEditorProps } from '@grafana/data';
 import { MyDataSourceOptions, MySecureJsonData } from '../types';
+
+const { SecretFormField } = LegacyForms;
 
 interface Props extends DataSourcePluginOptionsEditorProps<MyDataSourceOptions> {}
 
@@ -69,16 +71,18 @@ export function ConfigEditor(props: Props) {
           width={40}
         />
       </InlineField>
-      <InlineField label="API Key" labelWidth={12} tooltip="Guance API Key ID, generate in Guance > Management > Api Key > Key ID.">
-        <SecretInput
-          isConfigured={(secureJsonFields && secureJsonFields.apiKey) as boolean}
-          value={secureJsonData.apiKey || ''}
-          placeholder=""
-          width={40}
-          onReset={onResetAPIKey}
-          onChange={onAPIKeyChange}
-        />
-      </InlineField>
+
+      <SecretFormField
+        label="API Key"
+        labelWidth={6}
+        tooltip="Guance API Key ID, generate in Guance > Management > Api Key > Key ID."
+        isConfigured={Boolean(secureJsonFields && secureJsonFields.apiKey) as boolean}
+        value={secureJsonData.apiKey || ''}
+        placeholder=""
+        inputWidth={20}
+        onReset={onResetAPIKey}
+        onChange={onAPIKeyChange}
+      />
     </div>
   );
 }

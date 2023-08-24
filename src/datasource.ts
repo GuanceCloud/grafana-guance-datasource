@@ -61,7 +61,11 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
       res.series.forEach((serie: any) => {
         const columns = serie.columns || [];
         const fields: MutableField[] = columns.map((columnName: string, columnIndex: number) => {
-          const values = (serie.values || []).map((value: [string, number]) => value[columnIndex]);
+        const values = (serie.values || [])
+          .sort((a: any, b: any) => {
+            return a[0] - b[0];
+          })
+          .map((value: [string, number]) => value[columnIndex]);
           let fieldType = '';
           if (columnName === 'time') {
             fieldType = 'time';
