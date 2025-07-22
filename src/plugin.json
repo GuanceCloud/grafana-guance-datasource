@@ -39,6 +39,26 @@
       ]
     },
     {
+      "path": "workspaces",
+      "url": "{{ .JsonData.endpoint }}/api/v1/wksp_share/granted_ws_list",
+      "headers": [
+        {
+          "name": "DF-API-KEY",
+          "content": "{{ .SecureJsonData.apiKey }}"
+        }
+      ]
+    },
+    {
+      "path": "workspace",
+      "url": "{{ .JsonData.endpoint }}/api/v1/workspace/get",
+      "headers": [
+        {
+          "name": "DF-API-KEY",
+          "content": "{{ .SecureJsonData.apiKey }}"
+        }
+      ]
+    },
+    {
       "path": "healthz",
       "url": "{{ .JsonData.endpoint }}/api/v1/const/check_ping",
       "headers": [

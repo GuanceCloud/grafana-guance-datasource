@@ -1,0 +1,7 @@
+/* styles.css */
+@layer utilities {
+  .query-editor-container-workspace-select > div,
+  .variable-query-editor-container-workspace-select > div {
+    flex: 1 1 auto !important;
+  }
+}

@@ -1,10 +1,14 @@
 import { DataQuery, DataSourceJsonData } from '@grafana/data';
 
 export interface MyQuery extends DataQuery {
+  workspaceUUIDs?: any[];
+  qtype?: string;
   queryText?: string;
 }
 
 export const DEFAULT_QUERY: Partial<MyQuery> = {
+  workspaceUUIDs: [],
+  qtype: 'dql',
   queryText: '',
 };
 
@@ -41,5 +45,13 @@ export interface MySecureJsonData {
 }
 
 export interface MyVariableQuery {
+  workspaceUUIDs?: any[];
+  qtype: string,
   rawQuery: string;
 }
+
+export const DEFAULT_VARIABLE_QUERY: Partial<MyVariableQuery> = {
+  workspaceUUIDs: [],
+  qtype: 'dql',
+  rawQuery: '',
+};

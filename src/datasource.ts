@@ -10,8 +10,8 @@ import {
 import { getBackendSrv, getTemplateSrv, TemplateSrv, isFetchError } from '@grafana/runtime';
 import _ from 'lodash';
 import defaults from 'lodash/defaults';
-import { DataSourceResponse, DEFAULT_QUERY, MyDataSourceOptions, MyQuery, MyVariableQuery } from './types';
-import { typeOf, replaceQueryVariable } from './utils';
+import { DataSourceResponse, DEFAULT_QUERY, DEFAULT_VARIABLE_QUERY, MyDataSourceOptions, MyQuery, MyVariableQuery } from './types';
+import { typeOf, replaceQueryVariable, replacePromQLQueryVariable, formatQueryWorkspaceUUIDs } from './utils';
 import { lastValueFrom } from 'rxjs';
 
 export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
@@ -42,13 +42,26 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
       }
       
       const query = defaults(target, DEFAULT_QUERY);
+      const queryType = query.qtype || 'dql';
+      const replaceVariableFunc = queryType === 'promql' ? replacePromQLQueryVariable : replaceQueryVariable;
       let q = this.templateSrv.replace((query.queryText || ''), scopedVars, 'json');
-      q = replaceQueryVariable(q);
+      q = replaceVariableFunc(q);
+      if (!q) {
+        return;
+      }
 
+      const qtype = query.qtype || 'dql';
+      const { regionCode, workspaceUUIDs } = formatQueryWorkspaceUUIDs(query.workspaceUUIDs);
+      
       queryList.push({
-        q: q,
-        timeRange: timeRange,
-        maxPointCount: maxPointCount,
+        qtype,
+        query: {
+          q,
+          targetRegion: regionCode,
+          workspaceUUIDs,
+          timeRange,
+          maxPointCount,
+        }
       });
     });
 
@@ -143,24 +156,30 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
    */
   async metricFindQuery(query: MyVariableQuery, options?: any) {
     // format request params
-    const q = query.rawQuery;
+    const { workspaceUUIDs: queryWorkspaceUUIDs, qtype = 'dql', rawQuery: q } = defaults(query, DEFAULT_VARIABLE_QUERY);
+    const { regionCode, workspaceUUIDs } = formatQueryWorkspaceUUIDs(queryWorkspaceUUIDs);
     const timeRange = [options.range.from.valueOf(), options.range.to.valueOf()];
-    const queryList = [{
-      q: q,
-      timeRange: timeRange,
-      disableMultipleField: false,
-      limit: 50,
-    }];
+    const queryList = q ? [{
+      qtype,
+      query: {
+        q,
+        regionCode,
+        workspaceUUIDs,
+        timeRange: timeRange,
+        disableMultipleField: false,
+        limit: 50,
+      }
+    }] : [];
 
     // send request
     const resData = await this.queryData(queryList);
   
     // format response data
-    const series = resData[0].series;
+    const series = resData && resData[0] && resData[0].series;
     if (!series || !series.length) {
       return [];
     }
-    const values = series[0].values?.map((value: any) => ({ text: value[1] }));
+    const values = series[0].values?.map((value: any) => ({ text: value.at(-1) }));
     return values;
   }
 
@@ -168,9 +187,13 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
    * Query data with DQL.
    */
   async queryData(queries?: any) {
-    const queryList = queries.map((query: any) => {
+    if (!queries || !queries.length) {
+      return [];
+    }
+    const queryList = queries.map((queryItem: any) => {
+      const { qtype = 'dql', query = {} } = queryItem;
       return {
-        qtype: 'dql',
+        qtype,
         query: {
           ...query,
         }
@@ -184,6 +207,39 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
     return this.request('/query', params)
       .then((res) => {
         return res.data?.content?.data;
+      })
+      .catch((err) => {
+        let message = err;
+        if (isFetchError(err)) {
+          message = err.data && err.data.message || err.statusText;
+        }
+        throw new Error(message);
+      })
+  }
+  
+  async queryWorkspaceList(search = '') {
+    const params = {
+      pageIndex: 1,
+      pageSize: 100,
+      search: search || undefined,
+    };
+    return this.request('/workspaces', params)
+      .then((res) => {
+        return res?.data?.content || [];
+      })
+      .catch((err) => {
+        let message = err;
+        if (isFetchError(err)) {
+          message = err.data && err.data.message || err.statusText;
+        }
+        throw new Error(message);
+      })
+  }
+
+  async queryCurrentWorkspace() {
+    return this.request('/workspace')
+      .then((res) => {
+        return res?.data?.content || [];
       })
       .catch((err) => {
         let message = err;
