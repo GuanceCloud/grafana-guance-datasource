@@ -32,19 +32,50 @@ export function typeOf(obj: any): any {
  * host = re(`.*`) WITHOUT quotation mark, means all value in DQL.
  */
 export function replaceQueryVariable(query: string): string {
+  const doubleQuoteReg = /[\'\"]\"/ig
   const reg = /(=|in)\s*\[?[\'\"]?re\(`\.\*\`\)[\'\"]?\]?/ig
   const notReg = /(!=|not in)\s*\[?[\'\"]re\(`\.\*\`\)[\'\"]\]?/ig
   return query
+    .replace(doubleQuoteReg, "\"")
     .replace(notReg, "!= re(`.*`)")
     .replace(reg, "= re(`.*`)")
 }
 
 export function replacePromQLQueryVariable(query: string): string {
-  const reg = /(=|in)\s*\[?[\'\"]?re\(`\.\*\`\)[\'\"]?\]?/ig
-  const notReg = /(!=|not in)\s*\[?[\'\"]re\(`\.\*\`\)[\'\"]\]?/ig
+  const doubleQuoteReg = /[\'\"]\"/ig
+  const reg = /(=~|=|in)\s*\[?[\'\"]?re\(`\.\*\`\)[\'\"]?\]?/ig
+  const notReg = /(!~|!=|not in)\s*\[?[\'\"]re\(`\.\*\`\)[\'\"]\]?/ig
   return query
+    .replace(doubleQuoteReg, "\"")
     .replace(notReg, "!~'.*'")
     .replace(reg, "=~'.*'")
+}
+
+export const interpolateQueryExpr = (value: string | string[] = [], variable: any, queryType: string = 'dql'): string => {
+  // Handle empty value
+  if (!value || (Array.isArray(value) && value.length === 0)) {
+    return '';
+  }
+
+  // Single value (not multi-select, not include all)
+  if (!variable.multi && !variable.includeAll) {
+    return `${value}`;
+  }
+
+  // Convert to array if string
+  const values = Array.isArray(value) ? value : [value];
+
+  if (queryType === 'promql') {
+    return `"${values.join('|')}"`;
+  }
+
+  if (variable.multi) {
+    const valuesArr = values
+      .map((item: string) => `"${item}"`)
+    return `[${valuesArr.join(',')}]`;
+} else {
+    return `"${values[0]}"`;
+  }
 }
 
 // 格式选择空间ID的下拉选项信息

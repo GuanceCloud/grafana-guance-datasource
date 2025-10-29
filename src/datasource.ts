@@ -12,7 +12,7 @@ import { getBackendSrv, getTemplateSrv, TemplateSrv, isFetchError } from '@grafa
 import _ from 'lodash';
 import defaults from 'lodash/defaults';
 import { DataSourceResponse, DEFAULT_QUERY, DEFAULT_VARIABLE_QUERY, MyDataSourceOptions, MyQuery, MyVariableQuery } from './types';
-import { typeOf, replaceQueryVariable, replacePromQLQueryVariable, formatQueryWorkspaceUUIDs, formatLegend } from './utils';
+import { typeOf, replaceQueryVariable, replacePromQLQueryVariable, formatQueryWorkspaceUUIDs, formatLegend, interpolateQueryExpr } from './utils';
 import { lastValueFrom } from 'rxjs';
 
 export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
@@ -47,7 +47,13 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
       const query = defaults(target, DEFAULT_QUERY);
       const queryType = query.qtype || 'dql';
       const replaceVariableFunc = queryType === 'promql' ? replacePromQLQueryVariable : replaceQueryVariable;
-      let q = this.templateSrv.replace((query.queryText || ''), scopedVars, 'json');
+      
+      // Use custom interpolation function that handles single/multi/ALL values
+      const interpolateFunc = (value: string | string[] = [], variable: any) => {
+        return interpolateQueryExpr(value, variable, queryType);
+      };
+      
+      let q = this.templateSrv.replace((query.queryText || ''), scopedVars, interpolateFunc);
       q = replaceVariableFunc(q);
       if (!q) {
         return;
@@ -117,7 +123,6 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
         //   // Default: use the serie name
         //   displayName = Array.isArray(serieName) ? serieName.join(', ') : String(serieName || '');
         // }
-        console.log('why displayName', displayName)
         
         const fields: MutableField[] = columns.map((columnName: string, columnIndex: number) => {
         const values = (serie.values || [])
