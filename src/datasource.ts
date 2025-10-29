@@ -113,10 +113,11 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
         if (legendFormat) {
           displayName = formatLegend(legendFormat, labels);
         }
-        if (!displayName) {
-          // Default: use the serie name
-          displayName = Array.isArray(serieName) ? serieName.join(', ') : String(serieName || '');
-        }
+        // if (!displayName) {
+        //   // Default: use the serie name
+        //   displayName = Array.isArray(serieName) ? serieName.join(', ') : String(serieName || '');
+        // }
+        console.log('why displayName', displayName)
         
         const fields: MutableField[] = columns.map((columnName: string, columnIndex: number) => {
         const values = (serie.values || [])
@@ -141,9 +142,9 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
             } : {},
           };
           
-          if (columnName !== 'time') {
-            field.labels = labels;
-          }
+          // if (columnName !== 'time') {
+          //   field.labels = labels;
+          // }
           
           return field;
         })
