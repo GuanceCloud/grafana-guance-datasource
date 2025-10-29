@@ -1,6 +1,6 @@
 import '../styles.css';
 import React, { useRef, useEffect } from 'react';
-import { InlineField, QueryField, Select, AsyncMultiSelect } from '@grafana/ui';
+import { InlineField, QueryField, Select, AsyncMultiSelect, Input } from '@grafana/ui';
 import { QueryEditorProps } from '@grafana/data';
 import { DataSource } from '../datasource';
 import { MyDataSourceOptions, MyQuery, DEFAULT_QUERY } from '../types';
@@ -18,7 +18,7 @@ export function QueryEditor({ query, onChange, onRunQuery, datasource }: Props) 
     hasAuthedWorkspace: false,
   });
 
-  const { workspaceUUIDs, queryText, qtype } = {
+  const { workspaceUUIDs, queryText, qtype, legendFormat } = {
     ...DEFAULT_QUERY,
     ...query, // 合并传入的查询参数
   };
@@ -47,6 +47,10 @@ export function QueryEditor({ query, onChange, onRunQuery, datasource }: Props) 
 
   const onQueryTextChange = (queryText: string) => {
     onChange({ ...query, queryText });
+  };
+
+  const onLegendFormatChange = (event: React.FormEvent<HTMLInputElement>) => {
+    onChange({ ...query, legendFormat: event.currentTarget.value });
   };
 
   const getWorkspaceList = (search: string) => {
@@ -132,6 +136,21 @@ export function QueryEditor({ query, onChange, onRunQuery, datasource }: Props) 
           placeholder={'Enter Query (run with Shift+Enter)'}
           query={queryText || ''}
           portalOrigin="guance"
+        />
+      </InlineField>
+
+      <InlineField 
+        label="Legend" 
+        labelWidth={15} 
+        grow={true}
+        tooltip="Controls the name of the time series using label pattern. For example: {{hostname}} - {{app_name}}"
+      >
+        <Input
+          type="text"
+          placeholder="Optional, For example: {{hostname}}"
+          value={legendFormat || ''}
+          onChange={onLegendFormatChange}
+          onBlur={onRunQuery}
         />
       </InlineField>
     </div>

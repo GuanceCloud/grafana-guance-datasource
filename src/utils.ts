@@ -173,3 +173,27 @@ export const formatQueryWorkspaceUUIDs = (queryWorkspaceUUIDs: string[] | undefi
     workspaceUUIDs,
   }
 }
+
+/**
+ * Format legend using template string with label values
+ * Similar to Prometheus legend formatting
+ * @param legendFormat Template string like "{{label_name}}"
+ * @param labels Object containing label key-value pairs
+ * @returns Formatted legend string
+ */
+export const formatLegend = (legendFormat: string, labels: Record<string, any>): string => {
+  if (!legendFormat) {
+    return '';
+  }
+
+  let result = legendFormat;
+  
+  // Replace {{label_name}} with actual label values
+  const regex = /\{\{(\s*[\w.-]+\s*)\}\}/g;
+  result = result.replace(regex, (match, labelName) => {
+    const trimmedLabel = labelName.trim();
+    return labels[trimmedLabel] !== undefined ? String(labels[trimmedLabel]) : match;
+  });
+
+  return result;
+}

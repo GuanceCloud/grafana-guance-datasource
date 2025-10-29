@@ -6,12 +6,13 @@ import {
   ScopedVars,
   MutableDataFrame,
   MutableField,
+  FieldType,
 } from '@grafana/data';
 import { getBackendSrv, getTemplateSrv, TemplateSrv, isFetchError } from '@grafana/runtime';
 import _ from 'lodash';
 import defaults from 'lodash/defaults';
 import { DataSourceResponse, DEFAULT_QUERY, DEFAULT_VARIABLE_QUERY, MyDataSourceOptions, MyQuery, MyVariableQuery } from './types';
-import { typeOf, replaceQueryVariable, replacePromQLQueryVariable, formatQueryWorkspaceUUIDs } from './utils';
+import { typeOf, replaceQueryVariable, replacePromQLQueryVariable, formatQueryWorkspaceUUIDs, formatLegend } from './utils';
 import { lastValueFrom } from 'rxjs';
 
 export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
@@ -35,7 +36,9 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
 
     // format request params
     let queryList: any = [];
-    options.targets.forEach((target) => {
+    const queryMetadata: Map<number, { legendFormat?: string }> = new Map();
+    
+    options.targets.forEach((target, index) => {
       // DO NOT send request if query is hidden.
       if (target.hide) {
         return;
@@ -52,6 +55,11 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
 
       const qtype = query.qtype || 'dql';
       const { regionCode, workspaceUUIDs } = formatQueryWorkspaceUUIDs(query.workspaceUUIDs);
+      
+      // Store legend format for this query
+      queryMetadata.set(queryList.length, {
+        legendFormat: query.legendFormat,
+      });
       
       queryList.push({
         qtype,
@@ -70,29 +78,78 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
 
     // format reaponse data
     let dataList: any = []
-    resData.forEach((res: any) => {
+    resData.forEach((res: any, queryIndex: number) => {
+      const metadata = queryMetadata.get(queryIndex);
+      const legendFormat = metadata?.legendFormat;
+      
       res.series.forEach((serie: any) => {
         const columns = serie.columns || [];
+        const serieName = serie.name;
+        
+        // Build labels object from serie.name
+        // serie.name could be a string, array, or the labels might be in serie.tags/serie.labels
+        const labels: Record<string, any> = {};
+        
+        // Check if serie has tags or labels property
+        if (serie.tags) {
+          Object.assign(labels, serie.tags);
+        }
+        if (serie.labels) {
+          Object.assign(labels, serie.labels);
+        }
+        
+        // If serieName is an array, parse it
+        if (Array.isArray(serieName)) {
+          serieName.forEach((nameItem: string) => {
+            const parts = nameItem.split('=');
+            if (parts.length === 2) {
+              labels[parts[0]] = parts[1];
+            }
+          });
+        }
+        
+        // Generate display name using legend format or default
+        let displayName = '';
+        if (legendFormat) {
+          displayName = formatLegend(legendFormat, labels);
+        }
+        if (!displayName) {
+          // Default: use the serie name
+          displayName = Array.isArray(serieName) ? serieName.join(', ') : String(serieName || '');
+        }
+        
         const fields: MutableField[] = columns.map((columnName: string, columnIndex: number) => {
         const values = (serie.values || [])
           .sort((a: any, b: any) => {
             return a[0] - b[0];
           })
           .map((value: [string, number]) => value[columnIndex]);
-          let fieldType = '';
+          let fieldType: FieldType;
           if (columnName === 'time') {
-            fieldType = 'time';
+            fieldType = FieldType.time;
           } else {
-            fieldType = (typeof(values[0]) === 'number') ? 'number' : 'string';
+            fieldType = (typeof(values[0]) === 'number') ? FieldType.number : FieldType.string;
           }
-          return {
+          
+          // For non-time fields, apply the display name and labels
+          const field: MutableField = {
             name: columnName,
             type: fieldType,
             values: values,
+            config: columnName !== 'time' ? {
+              displayNameFromDS: displayName,
+            } : {},
           };
+          
+          if (columnName !== 'time') {
+            field.labels = labels;
+          }
+          
+          return field;
         })
         const data = new MutableDataFrame({
           fields: fields,
+          name: displayName,
         });
         dataList.push(data);
       })

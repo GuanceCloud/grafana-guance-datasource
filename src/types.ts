@@ -4,12 +4,14 @@ export interface MyQuery extends DataQuery {
   workspaceUUIDs?: any[];
   qtype?: string;
   queryText?: string;
+  legendFormat?: string;
 }
 
 export const DEFAULT_QUERY: Partial<MyQuery> = {
   workspaceUUIDs: [],
   qtype: 'dql',
   queryText: '',
+  legendFormat: '',
 };
 
 export interface DataSourceResponseSerie {
