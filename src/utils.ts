@@ -51,7 +51,7 @@ export function replacePromQLQueryVariable(query: string): string {
     .replace(reg, "=~'.*'")
 }
 
-export const interpolateQueryExpr = (value: string | string[] = [], variable: any, queryType: string = 'dql'): string => {
+export const interpolateQueryExpr = (value: string | string[], variable: any, queryType: string): string => {
   // Handle empty value
   if (!value || (Array.isArray(value) && value.length === 0)) {
     return '';
