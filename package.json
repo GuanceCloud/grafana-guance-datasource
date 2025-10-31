@@ -1,6 +1,6 @@
 {
     "name": "guance",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "Guance data source for Grafana",
     "scripts": {
         "build": "grafana-toolkit plugin:build",
