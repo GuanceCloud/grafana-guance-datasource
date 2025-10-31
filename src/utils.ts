@@ -33,20 +33,24 @@ export function typeOf(obj: any): any {
  */
 export function replaceQueryVariable(query: string): string {
   const doubleQuoteReg = /[\'\"]\"/ig
+  const doubleQuoteReg2 = /\"[\'\"]/ig
   const reg = /(=|in)\s*\[?[\'\"]?re\(`\.\*\`\)[\'\"]?\]?/ig
   const notReg = /(!=|not in)\s*\[?[\'\"]re\(`\.\*\`\)[\'\"]\]?/ig
   return query
     .replace(doubleQuoteReg, "\"")
+    .replace(doubleQuoteReg2, "\"")
     .replace(notReg, "!= re(`.*`)")
     .replace(reg, "= re(`.*`)")
 }
 
 export function replacePromQLQueryVariable(query: string): string {
   const doubleQuoteReg = /[\'\"]\"/ig
+  const doubleQuoteReg2 = /\"[\'\"]/ig
   const reg = /(=~|=|in)\s*\[?[\'\"]?re\(`\.\*\`\)[\'\"]?\]?/ig
   const notReg = /(!~|!=|not in)\s*\[?[\'\"]re\(`\.\*\`\)[\'\"]\]?/ig
   return query
     .replace(doubleQuoteReg, "\"")
+    .replace(doubleQuoteReg2, "\"")
     .replace(notReg, "!~'.*'")
     .replace(reg, "=~'.*'")
 }
