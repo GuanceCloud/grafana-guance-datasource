@@ -32,6 +32,7 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
   async query(options: DataQueryRequest<MyQuery>): Promise<DataQueryResponse> {
     const timeRange = [options.range.from.valueOf(), options.range.to.valueOf()];
     const maxPointCount = options.maxDataPoints || 360;
+    const interval = options.intervalMs / 1000;
     const scopedVars = this.getScopedVars(options.scopedVars);
 
     // format request params
@@ -75,6 +76,7 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
           workspaceUUIDs,
           timeRange,
           maxPointCount,
+          interval: interval || undefined,
         }
       });
     });
