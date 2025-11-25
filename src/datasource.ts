@@ -167,6 +167,7 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
 
   /**
    * Get Query Variables
+   * When ALL is selected, expand to all actual option values instead of regex
    */
   getScopedVars (scopedVars: ScopedVars) {
     const variables = this.templateSrv.getVariables();
@@ -180,11 +181,17 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
         variableValue = [variableValue];
       }
   
-      // re(`.*`) means all value in DQL.
+      // When ALL is selected, use all actual option values
       if (variableValue[0] === '$__all') {
-        vars[variableName] = {
-          text: variable.current.text,
-          value: 're(`.*`)',
+        const allValues = variable.options
+          ?.filter((opt: any) => opt.value !== '$__all')
+          .map((opt: any) => opt.value) || [];
+        
+        if (allValues.length > 0) {
+          vars[variableName] = {
+            text: variable.current.text,
+            value: allValues,
+          }
         }
       }
     });
@@ -220,9 +227,23 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
    */
   async metricFindQuery(query: MyVariableQuery, options?: any) {
     // format request params
-    const { workspaceUUIDs: queryWorkspaceUUIDs, qtype = 'dql', rawQuery: q } = defaults(query, DEFAULT_VARIABLE_QUERY);
+    const { workspaceUUIDs: queryWorkspaceUUIDs, qtype = 'dql', rawQuery } = defaults(query, DEFAULT_VARIABLE_QUERY);
     const { regionCode, workspaceUUIDs } = formatQueryWorkspaceUUIDs(queryWorkspaceUUIDs);
     const timeRange = [options.range.from.valueOf(), options.range.to.valueOf()];
+    
+    // Replace variables in query (support referencing other variables)
+    const queryType = qtype || 'dql';
+    const replaceVariableFunc = queryType === 'promql' ? replacePromQLQueryVariable : replaceQueryVariable;
+    const scopedVars = this.getScopedVars(options?.scopedVars || {});
+    
+    // Use custom interpolation function that handles single/multi/ALL values
+    const interpolateFunc = (value: string | string[] = [], variable: any) => {
+      return interpolateQueryExpr(value, variable, queryType);
+    };
+    
+    let q = this.templateSrv.replace((rawQuery || ''), scopedVars, interpolateFunc);
+    q = replaceVariableFunc(q);
+    
     const queryList = q ? [{
       qtype,
       query: {

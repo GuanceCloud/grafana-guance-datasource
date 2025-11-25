@@ -126,7 +126,7 @@ export function QueryEditor({ query, onChange, onRunQuery, datasource }: Props) 
         />
       </InlineField>
 
-      <InlineField label="Query" labelWidth={15} grow={true}>
+      <InlineField label="Query" labelWidth={15} grow={true} className="query-editor-container-query-field">
         <QueryField
           onChange={onQueryTextChange}
           onRunQuery={onRunQuery}
