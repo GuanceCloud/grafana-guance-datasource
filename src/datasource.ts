@@ -289,7 +289,15 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
       queries_body: JSON.stringify({ queries: queryList }),
     };
 
-    return this.request('/query', params)
+    // Choose GET or POST based on payload length to avoid overly long URLs
+    const bodyLength = params.queries_body?.length || 0;
+    const useGet = bodyLength < 2000; // threshold can be adjusted if needed
+
+    const requestPromise = useGet
+      ? this.request('/query', params)
+      : this.requestPost('/query', params);
+
+    return requestPromise
       .then((res) => {
         return res.data?.content?.data;
       })
@@ -342,5 +350,15 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
         params: params || {},
         method: 'GET',
       }));
+  }
+
+  async requestPost(url: string, data?: any) {
+    return lastValueFrom(
+      getBackendSrv().fetch<DataSourceResponse>({
+        url: `${this.baseUrl}${url}`,
+        method: 'POST',
+        data: data || {},
+      })
+    );
   }
 }

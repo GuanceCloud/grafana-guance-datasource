@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.4
+
+- Fix queries with very long content by sending them as POST requests instead of GET.
+
 ## 1.1.3
 
 - Support referencing other variables in variable queries
